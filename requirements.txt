@@ -1,0 +1,6 @@
+# Core dependencies for NiFi Diagnostics MCP
+fastmcp>=2.0
+httpx>=0.27
+
+# Tip: for exact, reproducible pins, run this in your activated venv:
+#   pip freeze > requirements.txt
