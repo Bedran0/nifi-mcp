@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🩺 NiFi Diagnostics MCP
+# NiFi Diagnostics MCP
 
 **A read-only Model Context Protocol server that lets an LLM diagnose Apache NiFi — without ever touching your data or your credentials.**
 
@@ -20,15 +20,15 @@ Debugging a NiFi flow usually means clicking through bulletins, DBCP pools, and 
 
 The design goal is **safe observability**: the assistant can *see* everything it needs to diagnose a problem, and *change* nothing.
 
-## ✨ Highlights
+## Highlights
 
-- 🔒 **Read-only by construction** — the HTTP layer rejects every non-`GET` request, so the server physically cannot start, stop, modify, or delete anything in NiFi.
-- 🙈 **Credential isolation** — the model never receives usernames, passwords, tokens, hosts, or ports. Connection details are stripped before anything reaches the LLM.
-- 🧩 **Focused tools** — one tool per diagnostic question, so a small local model doesn't have to guess.
-- 📜 **Log-aware** — reads NiFi's log files directly from disk for historical errors, not just live bulletins.
-- 🔌 **Transport-agnostic client** — ships wired for [opencode](https://opencode.ai) over stdio, but works with any MCP-capable client.
+- **Read-only by construction** — the HTTP layer rejects every non-`GET` request, so the server physically cannot start, stop, modify, or delete anything in NiFi.
+- **Credential isolation** — the model never receives usernames, passwords, tokens, hosts, or ports. Connection details are stripped before anything reaches the LLM.
+- **Focused tools** — one tool per diagnostic question, so a small local model doesn't have to guess.
+- **Log-aware** — reads NiFi's log files directly from disk for historical errors, not just live bulletins.
+- **Transport-agnostic client** — ships wired for [opencode](https://opencode.ai) over stdio, but works with any MCP-capable client.
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -43,7 +43,7 @@ flowchart LR
 
 The credentials flow from the environment **into the server only** — they are used once to obtain a session token and are never passed back out to the model.
 
-## 🛠️ Tools
+## Tools
 
 | Tool | What it reports |
 |------|-----------------|
@@ -54,7 +54,7 @@ The credentials flow from the environment **into the server only** — they are 
 | `list_affected_processors` | Every processor that uses a given DBCP pool, each with its `RUNNING` / `STOPPED` state, plus a state summary. |
 | `get_log_errors` | **Historical** errors parsed from the last *N* hours of log files. Supports `detailed=true/false`. |
 
-## 🔐 Security model
+## Security model
 
 This project is meant to run against a live NiFi instance, so the safety guarantees are deliberate:
 
@@ -63,15 +63,15 @@ This project is meant to run against a live NiFi instance, so the safety guarant
 3. **Redaction layer.** JDBC connection strings and other connection metadata are parsed and stripped so hosts, ports, and credentials don't leak into tool output.
 4. **Logs are read-only.** Log files are opened for reading only, never modified.
 
-> ⚠️ Treat the environment variables below as secrets. They are intentionally kept out of version control (see `.gitignore`) — never commit real values.
+> !!! Treat the environment variables below as secrets. They are intentionally kept out of version control (see `.gitignore`) — never commit real values.
 
-## 📋 Requirements
+## Requirements
 
 - Python 3.10+
 - Apache NiFi 2.11 with the REST API reachable (single-user + self-signed cert is supported)
 - An MCP-capable client (e.g. [opencode](https://opencode.ai))
 
-## 🚀 Installation
+## Installation
 
 ```bash
 git clone https://github.com/<your-username>/nifi-diagnostics-mcp.git
@@ -82,7 +82,7 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 The server is configured entirely through environment variables. Copy the template and fill in your own values:
 
@@ -99,7 +99,7 @@ cp .env.example .env
 
 You can provide these however your setup prefers: a shell profile, your MCP client's `environment` block, or a `.env` loader.
 
-## ▶️ Running
+## Running
 
 The server speaks MCP over **stdio**, so it's normally launched by your MCP client rather than by hand. To smoke-test that it imports and starts:
 
@@ -149,17 +149,17 @@ Report the affected processors and the RUNNING/STOPPED state summary exactly as 
 
 Saved as `nifi-affected.md`, this becomes `/nifi-affected <pool-id>`.
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [ ] `snapshot` / `verify` tools for state-preserving workflows (capture the running state of a pool's processors, then confirm it afterwards)
 - [ ] A "healthy processors" view to complement the error tools
 - [ ] Optional remote transport, so the server can run independently of the client
 - [ ] Decouple the server from opencode-specific assumptions
 
-## 🤝 Contributing
+## Contributing
 
 Issues and pull requests are welcome. Please keep the read-only guarantee intact — any new tool must only ever read from NiFi or its logs.
 
-## 📄 License
+## License
 
 Released under the [MIT License](LICENSE).
