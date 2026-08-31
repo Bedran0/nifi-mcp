@@ -43,3 +43,14 @@ NIFI_LOG_BASENAME = os.environ.get("NIFI_LOG_BASENAME", "nifi-app").strip()
 
 # Base path of the NiFi REST API.
 API = "/nifi-api"
+
+# --- MCP transport (how clients reach this server) ---
+# "stdio" (default): the client launches the server as a subprocess (single user).
+# "http": run as a long-lived network service that multiple clients can connect to.
+MCP_TRANSPORT = os.environ.get("MCP_TRANSPORT", "stdio").strip().lower()
+# Address to listen on when MCP_TRANSPORT=http.
+#   127.0.0.1 -> only this machine can reach it.
+#   0.0.0.0   -> reachable from the network (use ONLY on a trusted LAN/VPN; there is no auth).
+MCP_HTTP_HOST = os.environ.get("MCP_HTTP_HOST", "127.0.0.1").strip()
+MCP_HTTP_PORT = int(os.environ.get("MCP_HTTP_PORT", "8000"))
+MCP_HTTP_PATH = os.environ.get("MCP_HTTP_PATH", "/mcp").strip()
